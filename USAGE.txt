@@ -1,0 +1,7 @@
+=====
+Usage
+=====
+
+To use fls_sat_verif in a project::
+
+    import fls_sat_verif
