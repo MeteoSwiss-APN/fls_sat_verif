@@ -209,7 +209,7 @@ def calc_fls_fractions(
     in_dir_model,
     out_dir_fls,
     max_lt,
-    load_previous,
+    extend_previous,
     threshold,
 ):
     """Calculate FLS fractions in Swiss Plateau for OBS and FCST.
@@ -222,7 +222,7 @@ def calc_fls_fractions(
         in_dir_model (str):     dir with model data
         out_dir_fls (str):      dir with fls fractions
         max_lt (int):           maximum leadtime
-        load_previous (bool):   load previous obs and fcst dataframes
+        extend_previous (bool):   load previous obs and fcst dataframes
         threshold (float):      threshold for low stratus confidence level
 
     Returns:
@@ -238,7 +238,7 @@ def calc_fls_fractions(
 
     # retrieve OBS dataframe
     obs_path = Path(out_dir_fls, "obs.p")
-    if obs_path.is_file() and load_previous:
+    if obs_path.is_file() and extend_previous:
         obs = pickle.load(open(obs_path, "rb"))
         logging.info("Loaded obs from pickled object.")
     else:
@@ -247,7 +247,7 @@ def calc_fls_fractions(
 
     # retrieve FCST dataframe
     fcst_path = Path(out_dir_fls, "fcst.p")
-    if fcst_path.is_file() and load_previous:
+    if fcst_path.is_file() and extend_previous:
         fcst = pickle.load(open(fcst_path, "rb"))
         logging.info("Loaded fcst from pickled object.")
     else:
