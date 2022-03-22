@@ -9,12 +9,14 @@ import pandas as pd
 
 # Local
 from . import __version__
-from .plot import plt_median
+from .plot import plt_median_day_cycle
 from .plot import plt_timeseries
 from .utils import calc_fls_fractions
 from .utils import count_to_log_level
 from .utils import load_obs_fcst
 from .utils import retrieve_cosmo_files
+
+# from ipdb import set_trace
 
 
 @click.command()
@@ -45,7 +47,7 @@ from .utils import retrieve_cosmo_files
 @click.option(
     "--calc_fractions", is_flag=True, help="Calculate FLS fractions from OBS and FCST."
 )
-@click.option("--plot_median", is_flag=True, help="Plot median.")
+@click.option("--plot_median_day_cycle", is_flag=True, help="Plot median.")
 @click.option("--plot_timeseries", is_flag=True, help="Plot timeseries.")
 @click.option(
     "--start",
@@ -84,7 +86,7 @@ from .utils import retrieve_cosmo_files
     "--plot_dir",
     type=str,
     help="Directory where analysis plots are stored.",
-    default="/scratch/swester/output_sat_verif/",
+    default="/scratch/swester/fls_sat_verif/plots/",
 )
 @click.option(
     "--extend_previous",
@@ -117,7 +119,7 @@ def main(
     version: bool,
     retrieve_cosmo: bool,
     calc_fractions: bool,
-    plot_median: bool,
+    plot_median_day_cycle: bool,
     plot_timeseries: bool,
     start: str,
     end: str,
@@ -170,9 +172,16 @@ def main(
         )
 
     crit = obs.high_clouds < high_cloud_threshold
+    # set_trace()
 
-    if plot_median:
-        plt_median(obs[crit], fcst[crit], plot_dir)
+    if plot_median_day_cycle:
+        plt_median_day_cycle(
+            obs[crit].loc[start:end],
+            fcst[crit].loc[start:end],
+            plot_dir,
+            max_lt,
+            init_hours=init,
+        )
 
     if plot_timeseries:
         plt_timeseries(obs[crit], fcst[crit], plot_dir)

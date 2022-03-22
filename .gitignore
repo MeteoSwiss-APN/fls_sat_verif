@@ -109,3 +109,6 @@ venv_*/
 
 # VS Code
 .vscode
+
+# added by developers
+plots/*
