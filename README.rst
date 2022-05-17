@@ -8,7 +8,7 @@ Installation
 ------------
 1. Clone this repo
 2. ``cd fls_sat_dir``
-3. ``make venv install
+3. ``make venv install``
 
 Usage
 -----
