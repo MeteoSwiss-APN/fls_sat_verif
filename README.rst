@@ -18,6 +18,7 @@ Usage
         - start: e.g. 202108302345
         - end: e.g. 202112312345
         - intervall: 1h, 3h
+        ! The satellite files are available at :45 only!
         
 2. Prepare COSMO input data: Retrieve from archive, extract TQC
 
