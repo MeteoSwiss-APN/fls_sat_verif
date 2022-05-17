@@ -13,7 +13,7 @@ Installation
 Usage
 -----
 1. Prepare SAT input data: Retrieve with rubyscript
-    1. Make input dir on scratch, e.g. `input_sat_verif`
+    1. Make input dir on scratch, e.g. `/scratch/{USER}/input_sat_verif/sat`
     2. Run: ``rbrun ~osm/bin/extract_satdata.rb -P LSCL -m c1e -p <start>..<end>,1h -v``
         - start: e.g. 202108302345
         - end: e.g. 202112312345
