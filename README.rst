@@ -19,6 +19,7 @@ Usage
         - end: e.g. 202112312345
         - intervall: 1h, 3h
         ! The satellite files are available at :45 only!
+    3. Manually check whether files are available, if many files are missing, get in contact with Uli Hamann & Daniel Leuenberger
         
 2. Prepare COSMO input data: Retrieve from archive, extract TQC
 
