@@ -85,7 +85,7 @@ def extract_tqc(grib_file, out_dir, date_str, lt):
     return
 
 
-def retrieve_cosmo_files(start, end, interval, max_lt, wd, exp_model_dir, exp):
+def retrieve_cosmo_files(start, end, interval, max_lt, tqc_dir, exp_model_dir, exp):
     """Retrieve COSMO files.
 
     Args:
@@ -93,7 +93,7 @@ def retrieve_cosmo_files(start, end, interval, max_lt, wd, exp_model_dir, exp):
         end (datetime):     end
         interval (int):     interval between simulations
         max_lt (int):       maximum leadtime
-        wd (str):           working directory
+        tqc_dir (str):      tqc-folder in working directory
         exp_model_dir (str): path to model (cosmo) output
         exp (str):          experiment identifier
 
@@ -108,7 +108,7 @@ def retrieve_cosmo_files(start, end, interval, max_lt, wd, exp_model_dir, exp):
     logging.info(f"   for {first_date} to {last_date}.")
 
     # output dir (experiment-specific)
-    out_dir = Path(wd, "tqc", exp)
+    out_dir = Path(tqc_dir, exp)
     Path(out_dir).mkdir(parents=True, exist_ok=True)
 
     logging.info(f"   and put tqc here:")

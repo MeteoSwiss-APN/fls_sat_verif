@@ -137,7 +137,7 @@ def main(
         print(f"Working directory: {wd}")
         print(f"-------------------------------\n")
 
-    create_working_dirs(wd)
+    sat_dir, tqc_dir, fls_dir, plot_dir = create_working_dirs(wd)
 
     if version:
         click.echo(__version__)
@@ -171,7 +171,7 @@ def main(
             end=end,
             interval=interval,
             max_lt=max_lt,
-            wd=wd,
+            tqc_dir=tqc_dir,
             exp_model_dir=exp_model_dir,
             exp=exp,
         )
@@ -181,8 +181,8 @@ def main(
             start,
             end,
             interval=interval,
-            in_dir_obs=obs_dir,
-            in_dir_model=model_dir,
+            in_dir_obs=sat_dir,
+            in_dir_model=tqc_dir,
             out_dir_fls=fls_dir,
             max_lt=max_lt,
             extend_previous=extend_previous,
