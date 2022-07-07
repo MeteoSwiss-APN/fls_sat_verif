@@ -60,7 +60,9 @@ from .utils import retrieve_cosmo_files
     help="End date: YYMMDDHH.",
 )
 @click.option("--init", type=int, multiple=True, help="Init time, e.g. 00 UTC, 12 UTC.")
-@click.option("--interval", type=int, help="Time between init of simulations.")
+@click.option(
+    "--interval", type=int, default=12, help="Time between init of simulations."
+)
 @click.option(
     "--max_lt", type=int, default=33, help="Maximal leadtime in hours. Default: 33"
 )
@@ -68,25 +70,25 @@ from .utils import retrieve_cosmo_files
     "--model_dir",
     type=str,
     help="Directory with TQC from model output.",
-    default="/scratch/swester/input_sat_verif/tqc",
+    default="$SCRATCH/input_sat_verif/tqc",
 )
 @click.option(
     "--obs_dir",
     type=str,
     help="Directory with raw low cloud confidence level files.",
-    default="/scratch/swester/input_sat_verif/sat",
+    default="$SCRATCH/input_sat_verif/sat",
 )
 @click.option(
     "--fls_dir",
     type=str,
     help="Directory where pickled dataframes containing FLS fractions are stored.",
-    default="/scratch/swester/input_sat_verif/fls",
+    default="$SCRATCH/input_sat_verif/fls",
 )
 @click.option(
     "--plot_dir",
     type=str,
     help="Directory where analysis plots are stored.",
-    default="/scratch/swester/fls_sat_verif/plots/",
+    default="$SCRATCH/fls_sat_verif/plots/",
 )
 @click.option(
     "--extend_previous",
@@ -123,8 +125,8 @@ def main(
     plot_timeseries: bool,
     start: str,
     end: str,
-    init: int,
-    interval: int,
+    init: int,  # used for plotting specific or all leadtimes
+    interval: int,  # used for extracting tqc
     max_lt: int,
     model_dir: str,
     obs_dir: str,
@@ -147,11 +149,13 @@ def main(
         return
 
     if dry_run:
-        click.echo("Is dry run")
+        click.echo("This is a dry run. Globi wishes you a good day.")
         return
 
     if load_previous:
         obs, fcst = load_obs_fcst(fls_dir)
+        crit = obs.high_clouds < high_cloud_threshold
+        # set_trace()
 
     if retrieve_cosmo:
         retrieve_cosmo_files(
@@ -170,9 +174,6 @@ def main(
             extend_previous=extend_previous,
             threshold=lscl_threshold,
         )
-
-    crit = obs.high_clouds < high_cloud_threshold
-    # set_trace()
 
     if plot_median_day_cycle:
         plt_median_day_cycle(

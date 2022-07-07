@@ -112,3 +112,5 @@ venv_*/
 
 # added by developers
 plots/*
+stdeo*
+script_*
