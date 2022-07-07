@@ -25,7 +25,16 @@ Usage
 
 ``conda activate fls_sat_verif``
 
-``fls_sat_verif --retrieve_cosmo --start YYMMDDHH --end YYMMDDHH --interval HH ``
+``fls_sat_verif --retrieve_cosmo --start YYMMDDHH --end YYMMDDHH --interval HH --model_dir $SCRATCH/input_sat_verif/tqc``
+
+3. Calculate FLS fractions
+
+``fls_sat_verif --calc_fractions --start YYMMDDHH --end YYMMDDHH --interval HH --max_lt HH
+--obs_dir $SCRATCH/input_sat_verif/sat
+--model_dir $SCRATCH/input_sat_verif/tqc
+--fls_dir $SCRATCH/input_sat_verif/fls
+--extend_previous``
+
 
 
 Credits
