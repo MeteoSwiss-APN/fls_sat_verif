@@ -42,6 +42,7 @@ from .utils import retrieve_cosmo_files
     help="Print version",
 )
 @click.option("--wd", type=str, help="Working directory.")
+@click.option("--exp", type=str, help="Name of experiment.")
 @click.option(
     "--retrieve_cosmo",
     is_flag=True,
@@ -68,6 +69,12 @@ from .utils import retrieve_cosmo_files
 )
 @click.option(
     "--max_lt", type=int, default=24, help="Maximal leadtime in hours. Default: 33"
+)
+@click.option(
+    "--exp_model_dir",
+    type=str,
+    default="/store/s83/osm/COSMO-1E/",
+    help="Path to model output. EXPECTS SUBOLDERS FOR YEARS! -> FCST21, FCST22, ... ",
 )
 @click.option(
     "--extend_previous",
@@ -99,6 +106,8 @@ def main(
     verbose: int,
     version: bool,
     wd: str,
+    exp: str,
+    exp_model_dir: str,
     retrieve_cosmo: bool,
     calc_fractions: bool,
     plot_median_day_cycle: bool,
@@ -144,8 +153,27 @@ def main(
         # set_trace()
 
     if retrieve_cosmo:
+
+        if not exp:
+            print(f"Please give a sensible input for the experiment identifier: --exp.")
+            sys.exit(1)
+
+        if not start:
+            print("Please indicate --start: YYMMDDHH.")
+            sys.exit(1)
+
+        if not end:
+            print("Please indicate --end: YYMMDDHH.")
+            sys.exit(1)
+
         retrieve_cosmo_files(
-            start=start, end=end, interval=interval, out_dir=model_dir, max_lt=max_lt
+            start=start,
+            end=end,
+            interval=interval,
+            max_lt=max_lt,
+            wd=wd,
+            exp_model_dir=exp_model_dir,
+            exp=exp,
         )
 
     if calc_fractions:

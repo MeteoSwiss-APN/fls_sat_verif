@@ -39,7 +39,9 @@ def plt_median_day_cycle(obs, fcst, plot_dir, max_lt, init_hours):
     # calculate daily cycle median FLS fraction from OBS
     obs_median = pd.Series(index=day_hours)
     for day_hour in day_hours:
-        obs_median[day_hour] = obs[obs.index.hour == day_hour].fls_frac.median()
+        obs_day_hour = obs[obs.index.hour == day_hour]
+        obs_median[day_hour] = obs_day_hour.fls_frac.median()
+        logging.info(f"day time {day_hour}: {len(obs_day_hour)} observations")
 
     # loop over init_hours
     for init_hour in init_hours:
@@ -50,8 +52,11 @@ def plt_median_day_cycle(obs, fcst, plot_dir, max_lt, init_hours):
         fcst_median = pd.Series(index=day_hours)
 
         for day_hour in day_hours:
+            fcst_max_lt = fcst[fcst.columns[fcst.columns < (max_lt + 1)]]
             lt_hour = (day_hour + init_hour) % 24
-            fcst_median[day_hour] = fcst[fcst.index.hour == day_hour][lt_hour].median()
+            fcst_day_hour = fcst_max_lt[fcst_max_lt.index.hour == day_hour][lt_hour]
+            fcst_median[day_hour] = fcst_day_hour.median()
+            logging.info(f"day time {day_hour}: {len(fcst_day_hour)} forecasts")
 
             ax.bar(
                 day_hour - 0.2,
@@ -84,9 +89,9 @@ def plt_median_day_cycle(obs, fcst, plot_dir, max_lt, init_hours):
         # save figure
         file_name = f"median_day_cycle_init_{init_hour}"
         out_name = Path(plot_dir, f"{file_name}.png")
-        plt.savefig(out_name)
-        logging.info(f"Saved as:")
-        logging.info(f"  {out_name}")
+        plt.savefig(out_name, dpi=250)
+        print(f"Saved as:")
+        print(f"  {out_name}")
 
 
 def plt_timeseries(obs, fcst, plot_dir):

@@ -85,25 +85,34 @@ def extract_tqc(grib_file, out_dir, date_str, lt):
     return
 
 
-def retrieve_cosmo_files(start, end, interval, out_dir, max_lt):
+def retrieve_cosmo_files(start, end, interval, max_lt, wd, exp_model_dir, exp):
     """Retrieve COSMO files.
 
     Args:
         start (datetime):   start
         end (datetime):     end
         interval (int):     interval between simulations
-        out_dir (str):      output directory for tqc-files
         max_lt (int):       maximum leadtime
+        wd (str):           working directory
+        exp_model_dir (str): path to model (cosmo) output
+        exp (str):          experiment identifier
 
     """
-    cosmo_dir = f"/store/s83/osm/COSMO-1E/"  # FCST{start.strftime('%y')}"
-    logging.info(f"Retrieving COSMO-files from {cosmo_dir}")
-
-    # create output directory
-    Path(out_dir).mkdir(parents=True, exist_ok=True)
+    logging.info(f"Retrieving COSMO-files from {exp_model_dir}")
+    logging.info(f"   from +0h to +{max_lt}h leadtime")
 
     # list of ini-dates of simulations
     dates = pd.date_range(start, end, freq=f"{interval}H")
+    first_date = dates[0].strftime("%b %d, %Y, %H UTC")
+    last_date = dates[0].strftime("%b %d, %Y, %H UTC")
+    logging.info(f"   for {first_date} to {last_date}.")
+
+    # output dir (experiment-specific)
+    out_dir = Path(wd, "tqc", exp)
+    Path(out_dir).mkdir(parents=True, exist_ok=True)
+
+    logging.info(f"   and put tqc here:")
+    logging.info(f"   {out_dir}")
 
     # loop over simulations
     for date in dates:
@@ -114,7 +123,7 @@ def retrieve_cosmo_files(start, end, interval, out_dir, max_lt):
         # collect grib files
         for lt in range(0, max_lt + 1, 1):
             model_file = list(
-                Path(cosmo_dir, f"FCST{date.strftime('%y')}").glob(
+                Path(exp_model_dir, f"FCST{date.strftime('%y')}").glob(
                     f"{date_str}_???/grib/c1effsurf{lt:03}_000"
                 )
             )
