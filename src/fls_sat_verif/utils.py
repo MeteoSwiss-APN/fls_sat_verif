@@ -29,13 +29,40 @@ def count_to_log_level(count: int) -> int:
         return logging.DEBUG
 
 
+def create_working_dirs(wd):
+    """Create working directory and required subfolders.
+
+    Args:
+        wd (str): Path to working directory.
+
+    Returns:
+        sat_dir: Directory for satellite data (LSCL).
+        tqc_dir: Directory for model data (TQC netcdf files.)
+        fls_dir: Directory for pandas dataframes for FLS fractions.
+        plot_dir: Directory for final plots.
+
+    """
+    sat_dir = Path(wd, "sat")
+    tqc_dir = Path(wd, "tqc")
+    fls_dir = Path(wd, "fls")
+    plot_dir = Path(wd, "plots")
+
+    logging.info("Your working directories:")
+
+    for dir in [sat_dir, tqc_dir, fls_dir, plot_dir]:
+        Path(dir).mkdir(parents=True, exist_ok=True)
+        logging.info(f"   {dir}")
+
+    return sat_dir, tqc_dir, fls_dir, plot_dir
+
+
 def extract_tqc(grib_file, out_dir, date_str, lt):
     """Extract tqc from model file using fieldextra.
 
     Args:
         grib_file (str): Grib file
         out_dir (str): Output directory
-        date_str (str): date
+        date_str (str): date YYMMDDHH
         lt (int): leadtime
 
     """

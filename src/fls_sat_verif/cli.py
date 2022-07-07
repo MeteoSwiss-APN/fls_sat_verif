@@ -1,6 +1,7 @@
 """Command line interface of fls_sat_verif."""
 # Standard library
 import logging
+import sys
 from email.policy import default
 
 # Third-party
@@ -13,6 +14,7 @@ from .plot import plt_median_day_cycle
 from .plot import plt_timeseries
 from .utils import calc_fls_fractions
 from .utils import count_to_log_level
+from .utils import create_working_dirs
 from .utils import load_obs_fcst
 from .utils import retrieve_cosmo_files
 
@@ -39,6 +41,7 @@ from .utils import retrieve_cosmo_files
     is_flag=True,
     help="Print version",
 )
+@click.option("--wd", type=str, help="Working directory.")
 @click.option(
     "--retrieve_cosmo",
     is_flag=True,
@@ -64,31 +67,7 @@ from .utils import retrieve_cosmo_files
     "--interval", type=int, default=12, help="Time between init of simulations."
 )
 @click.option(
-    "--max_lt", type=int, default=33, help="Maximal leadtime in hours. Default: 33"
-)
-@click.option(
-    "--model_dir",
-    type=str,
-    help="Directory with TQC from model output.",
-    default="$SCRATCH/input_sat_verif/tqc",
-)
-@click.option(
-    "--obs_dir",
-    type=str,
-    help="Directory with raw low cloud confidence level files.",
-    default="$SCRATCH/input_sat_verif/sat",
-)
-@click.option(
-    "--fls_dir",
-    type=str,
-    help="Directory where pickled dataframes containing FLS fractions are stored.",
-    default="$SCRATCH/input_sat_verif/fls",
-)
-@click.option(
-    "--plot_dir",
-    type=str,
-    help="Directory where analysis plots are stored.",
-    default="$SCRATCH/fls_sat_verif/plots/",
+    "--max_lt", type=int, default=24, help="Maximal leadtime in hours. Default: 33"
 )
 @click.option(
     "--extend_previous",
@@ -119,6 +98,7 @@ def main(
     dry_run: bool,
     verbose: int,
     version: bool,
+    wd: str,
     retrieve_cosmo: bool,
     calc_fractions: bool,
     plot_median_day_cycle: bool,
@@ -128,14 +108,10 @@ def main(
     init: int,  # used for plotting specific or all leadtimes
     interval: int,  # used for extracting tqc
     max_lt: int,
-    model_dir: str,
-    obs_dir: str,
-    fls_dir: str,
-    plot_dir: str,
     extend_previous: bool,
     load_previous: bool,
     lscl_threshold: float,
-    high_cloud_threshold
+    high_cloud_threshold,
 ) -> None:
 
     logging.basicConfig(level=count_to_log_level(verbose))
@@ -143,6 +119,16 @@ def main(
     # logging.warning("This is a warning.")
     # logging.info("This is an info message.")
     # logging.debug("This is a debug message.")
+
+    if not wd:
+        print(f"Please give a sensible input for the working directory: --wd.")
+        sys.exit(1)
+    else:
+        print(f"\n-------------------------------")
+        print(f"Working directory: {wd}")
+        print(f"-------------------------------\n")
+
+    create_working_dirs(wd)
 
     if version:
         click.echo(__version__)
