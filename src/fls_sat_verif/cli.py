@@ -22,6 +22,7 @@ from .utils import retrieve_cosmo_files
 
 
 @click.command()
+@click.version_option(__version__, "--version", "-V", message="%(version)s")
 @click.option(
     "--dry-run",
     "-n",
@@ -33,13 +34,8 @@ from .utils import retrieve_cosmo_files
     "--verbose",
     "-v",
     count=True,
+    default=1,
     help="Increase verbosity (specify multiple times for more)",
-)
-@click.option(
-    "--version",
-    "-V",
-    is_flag=True,
-    help="Print version",
 )
 @click.option("--wd", type=str, help="Working directory.")
 @click.option("--exp", type=str, help="Name of experiment.")
@@ -104,7 +100,6 @@ def main(
     *,
     dry_run: bool,
     verbose: int,
-    version: bool,
     wd: str,
     exp: str,
     exp_model_dir: str,
@@ -138,10 +133,6 @@ def main(
         print(f"-------------------------------\n")
 
     create_working_dirs(wd)
-
-    if version:
-        click.echo(__version__)
-        return
 
     if dry_run:
         click.echo("This is a dry run. Globi wishes you a good day.")
