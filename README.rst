@@ -48,6 +48,9 @@ To get detailed log-messages printed to screen use ``-v``, ``-vv`` or even ``-vv
 
 ``fls_sat_verif --calc_fractions --start YYMMDDHH --end YYMMDDHH --interval HH --max_lt HH --exp <experiment_name> --wd <wd> --extend_previous``
 
+4. Plotting
+
+``fls_sat_verif --plot_median_day_cycle --wd <wd> --exp ref --start YYMMDDHH --end YYMMDDHH --init H(H)``
 
 
 Credits
