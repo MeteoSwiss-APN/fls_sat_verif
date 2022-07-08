@@ -18,15 +18,16 @@ from matplotlib.patches import Patch
 # from ipdb import set_trace
 
 
-def plt_median_day_cycle(obs, fcst, plot_dir, max_lt, init_hours):
+def plt_median_day_cycle(obs, fcst, plot_dir, exp, max_lt, init_hours):
     """Plot median FLS fraction.
 
     Args:
-        obs (dataframe): obs from satellite
-        fcst (dataframe): tqc from model
-        plot_dir (str): output_path
-        max_lt (int): maximum leadtime - not implemented yet!
-        init_hours (list): init hours of model simulations
+        obs (dataframe):    obs from satellite
+        fcst (dataframe):   tqc from model
+        plot_dir (str):     output_path
+        exp (str):          experiment identifier
+        max_lt (int):       maximum leadtime - does not work properly yet! # TODO
+        init_hours (list):  init hours of model simulations
 
     """
     # define colors
@@ -82,12 +83,14 @@ def plt_median_day_cycle(obs, fcst, plot_dir, max_lt, init_hours):
         # add customised legend
         legend_elements = [
             Patch(color=color_obs, label=f"OBS"),
-            Patch(color=color_fcst, label=f"FCST, Init: {init_hour:02} UTC"),
+            Patch(
+                color=color_fcst, label=f"FCST {exp.upper()}, Init: {init_hour:02} UTC"
+            ),
         ]
         ax.legend(handles=legend_elements)
 
         # save figure
-        file_name = f"median_day_cycle_init_{init_hour}"
+        file_name = f"median_day_cycle_{exp}_init_{init_hour}"
         out_name = Path(plot_dir, f"{file_name}.png")
         plt.savefig(out_name, dpi=250)
         print(f"Saved as:")

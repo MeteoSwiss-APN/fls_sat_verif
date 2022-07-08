@@ -160,7 +160,6 @@ def main(
     # useful for debugging: uncomment ipdb-line above and set_trace-line below.
     if load_fractions:
         obs, fcst = load_obs_fcst(wd, exp)
-        crit = obs.high_clouds < high_cloud_threshold
         # set_trace()
         # debugging:
         # inspect dataframe with e.g.
@@ -201,12 +200,14 @@ def main(
 
         # load dataframes
         obs, fcst = load_obs_fcst(wd, exp)
+        crit = obs.high_clouds < high_cloud_threshold
 
         # plotting
         plt_median_day_cycle(
             obs[crit].loc[start:end],
             fcst[crit].loc[start:end],
             plot_dir,
+            exp,
             max_lt,
             init_hours=init,
         )
