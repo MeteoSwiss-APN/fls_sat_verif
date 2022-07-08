@@ -43,11 +43,7 @@ To get detailed log-messages printed to screen use ``-v``, ``-vv`` or even ``-vv
 
 3. Calculate FLS fractions
 
-``fls_sat_verif --calc_fractions --start YYMMDDHH --end YYMMDDHH --interval HH --max_lt HH --exp <experiment_name>
---obs_dir $SCRATCH/input_sat_verif/sat
---model_dir $SCRATCH/input_sat_verif/tqc
---fls_dir $SCRATCH/input_sat_verif/fls
---extend_previous``
+``fls_sat_verif --calc_fractions --start YYMMDDHH --end YYMMDDHH --interval HH --max_lt HH --exp <experiment_name> --wd <wd> --extend_previous``
 
 
 
