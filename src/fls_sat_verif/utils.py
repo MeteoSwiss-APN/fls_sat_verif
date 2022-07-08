@@ -236,6 +236,36 @@ def save_as_pickle(obj, path):
     return
 
 
+def extend_dataframe(df, new_ind):
+    """Extend existing dataframe with rows for new valid times.
+
+    Args:
+        df (pd.Dataframe):          Existing dataframe
+        new_ind (DatetimeIndex):    List of valid times from start to end.
+                                    (Might overlap with existing indeces.)
+
+    Returns:
+        pd.Dataframe: df extended with nan-rows for truly new dates.
+
+    """
+    # extract list of new indices which don't appear yet in dataframe
+    old_ind = df.index
+    only_new_ind = []
+    for ind in new_ind:
+        if ind in old_ind:
+            pass
+        else:
+            only_new_ind.append(ind)
+
+    # create new df
+    only_new_df = pd.DataFrame(index=only_new_ind)
+
+    # combine existing and truly new dataset
+    combined_df = pd.concat([df, only_new_df]).sort_index()
+
+    return combined_df
+
+
 def calc_fls_fractions(
     start,
     end,
@@ -280,7 +310,8 @@ def calc_fls_fractions(
     # retrieve OBS dataframe
     obs_path = Path(out_dir_fls, "obs.p")
     if obs_path.is_file() and extend_previous:
-        obs = pickle.load(open(obs_path, "rb"))
+        existing_obs = pickle.load(open(obs_path, "rb"))
+        obs = extend_dataframe(existing_obs, valid_times)
         logging.warning(f"Loaded obs from pickled object:")
         logging.warning(f"  {obs_path}")
     else:
@@ -292,7 +323,8 @@ def calc_fls_fractions(
     # retrieve FCST dataframe
     fcst_path = Path(out_dir_fls, f"fcst_{exp}.p")
     if fcst_path.is_file() and extend_previous:
-        fcst = pickle.load(open(fcst_path, "rb"))
+        existing_fcst = pickle.load(open(fcst_path, "rb"))
+        fcst = extend_dataframe(existing_fcst, valid_times)
         logging.warning("Loaded fcst from pickled object:")
         logging.warning(f"  {fcst_path}")
     else:
