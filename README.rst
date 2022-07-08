@@ -23,7 +23,9 @@ To get detailed log-messages printed to screen use ``-v``, ``-vv`` or even ``-vv
 1. Prepare SAT input data: Retrieve with rubyscript
 
     1. Create directory ``<wd>/sat``
-    2. In there, run: ``rbrun ~osm/bin/extract_satdata.rb -P LSCL -m c1e -p <start>..<end>,1h -o $SCRATCH/wd_fls_sat_verif/sat/ -v``
+    
+    2.  Run: ``rbrun ~osm/bin/extract_satdata.rb -P LSCL -m c1e -p <start>..<end>,1h -o <wd>/sat/ -v``
+    
         - start: e.g. 202108302345
         - end: e.g. 202112312345
         - intervall: 1h, 3h
