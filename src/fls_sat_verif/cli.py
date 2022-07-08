@@ -70,7 +70,7 @@ from .utils import retrieve_cosmo_files
     "--exp_model_dir",
     type=str,
     default="/store/s83/osm/COSMO-1E/",
-    help="Path to model output. EXPECTS SUBOLDERS FOR YEARS! -> FCST21, FCST22, ... ",
+    help="Path to model output. EXPECTS SUBFOLDERS FOR YEARS! -> FCST21, FCST22, ... ",
 )
 @click.option(
     "--extend_previous",
@@ -79,7 +79,7 @@ from .utils import retrieve_cosmo_files
     help="Extend existing obs and fcst dataframes if available.",
 )
 @click.option(
-    "--load_previous",
+    "--load_fractions",
     is_flag=True,
     default=False,
     help="Load existing obs and fcst dataframes if available.",
@@ -113,7 +113,7 @@ def main(
     interval: int,  # used for extracting tqc
     max_lt: int,
     extend_previous: bool,
-    load_previous: bool,
+    load_fractions: bool,
     lscl_threshold: float,
     high_cloud_threshold,
 ) -> None:
@@ -127,8 +127,8 @@ def main(
     # check mandatory inputs:
     # - working directory
     # - experiment identifier
-    # - start
-    # - end
+    # - start (except when only loading fractions)
+    # - end   (except when only loading fractions)
 
     if not wd:
         print(f"Please give a sensible input for the working directory: --wd.")
@@ -142,13 +142,14 @@ def main(
         print(f"Please give a sensible input for the experiment identifier: --exp.")
         sys.exit(1)
 
-    if not start:
-        print("Please indicate --start: YYMMDDHH.")
-        sys.exit(1)
+    if not load_fractions:
+        if not start:
+            print("Please indicate --start: YYMMDDHH.")
+            sys.exit(1)
 
-    if not end:
-        print("Please indicate --end: YYMMDDHH.")
-        sys.exit(1)
+        if not end:
+            print("Please indicate --end: YYMMDDHH.")
+            sys.exit(1)
 
     sat_dir, tqc_dir, fls_dir, plot_dir = create_working_dirs(wd)
 
@@ -156,10 +157,15 @@ def main(
         click.echo("This is a dry run. Globi wishes you a good day.")
         return
 
-    if load_previous:
-        obs, fcst = load_obs_fcst(fls_dir)
+    # useful for debugging: uncomment ipdb-line above and set_trace-line below.
+    if load_fractions:
+        obs, fcst = load_obs_fcst(wd, exp)
         crit = obs.high_clouds < high_cloud_threshold
         # set_trace()
+        # debugging:
+        # inspect dataframe with e.g.
+        #  obs.loc["2021-11"]
+        #  obs[obs.index.hour == 12]]
 
     if retrieve_cosmo:
 
@@ -188,6 +194,15 @@ def main(
         )
 
     if plot_median_day_cycle:
+
+        if not init:
+            print("Specify --init : Day time hour(s) where forecasts are started.")
+            sys.exit(1)
+
+        # load dataframes
+        obs, fcst = load_obs_fcst(wd, exp)
+
+        # plotting
         plt_median_day_cycle(
             obs[crit].loc[start:end],
             fcst[crit].loc[start:end],
@@ -196,5 +211,5 @@ def main(
             init_hours=init,
         )
 
-    if plot_timeseries:
+    if plot_timeseries:  # work in progress
         plt_timeseries(obs[crit], fcst[crit], plot_dir)
