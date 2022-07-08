@@ -129,6 +129,12 @@ def main(
     # logging.info("This is an info message.")
     # logging.debug("This is a debug message.")
 
+    # check mandatory inputs:
+    # - working directory
+    # - experiment identifier
+    # - start
+    # - end
+
     if not wd:
         print(f"Please give a sensible input for the working directory: --wd.")
         sys.exit(1)
@@ -136,6 +142,18 @@ def main(
         print(f"\n-------------------------------")
         print(f"Working directory: {wd}")
         print(f"-------------------------------\n")
+
+    if not exp:
+        print(f"Please give a sensible input for the experiment identifier: --exp.")
+        sys.exit(1)
+
+    if not start:
+        print("Please indicate --start: YYMMDDHH.")
+        sys.exit(1)
+
+    if not end:
+        print("Please indicate --end: YYMMDDHH.")
+        sys.exit(1)
 
     sat_dir, tqc_dir, fls_dir, plot_dir = create_working_dirs(wd)
 
@@ -153,18 +171,6 @@ def main(
         # set_trace()
 
     if retrieve_cosmo:
-
-        if not exp:
-            print(f"Please give a sensible input for the experiment identifier: --exp.")
-            sys.exit(1)
-
-        if not start:
-            print("Please indicate --start: YYMMDDHH.")
-            sys.exit(1)
-
-        if not end:
-            print("Please indicate --end: YYMMDDHH.")
-            sys.exit(1)
 
         retrieve_cosmo_files(
             start=start,
@@ -184,6 +190,7 @@ def main(
             in_dir_obs=sat_dir,
             in_dir_model=tqc_dir,
             out_dir_fls=fls_dir,
+            exp=exp,
             max_lt=max_lt,
             extend_previous=extend_previous,
             threshold=lscl_threshold,

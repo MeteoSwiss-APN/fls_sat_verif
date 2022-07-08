@@ -104,7 +104,7 @@ def retrieve_cosmo_files(start, end, interval, max_lt, tqc_dir, exp_model_dir, e
     # list of ini-dates of simulations
     dates = pd.date_range(start, end, freq=f"{interval}H")
     first_date = dates[0].strftime("%b %d, %Y, %H UTC")
-    last_date = dates[0].strftime("%b %d, %Y, %H UTC")
+    last_date = dates[-1].strftime("%b %d, %Y, %H UTC")
     logging.info(f"   for {first_date} to {last_date}.")
 
     # output dir (experiment-specific)
@@ -227,7 +227,6 @@ def save_as_pickle(obj, path):
 
     """
     # create parent if not existing yet
-    print(path.parents[0])
     path.parents[0].mkdir(parents=True, exist_ok=True)
 
     # dump object
@@ -244,6 +243,7 @@ def calc_fls_fractions(
     in_dir_obs,
     in_dir_model,
     out_dir_fls,
+    exp,
     max_lt,
     extend_previous,
     threshold,
@@ -253,12 +253,13 @@ def calc_fls_fractions(
     Args:
         start (datetime):       start
         end (datetime):         end
-        interval (int):         interval between simulations
+        interval (int):         interval between simulations in hours
         in_dir_obs (str):       dir with sat data
         in_dir_model (str):     dir with model data
         out_dir_fls (str):      dir with fls fractions
+        exp (str):              experiment identifier
         max_lt (int):           maximum leadtime
-        extend_previous (bool):   load previous obs and fcst dataframes
+        extend_previous (bool): load previous obs and fcst dataframes
         threshold (float):      threshold for low stratus confidence level
 
     Returns:
@@ -271,24 +272,34 @@ def calc_fls_fractions(
     valid_times = pd.date_range(
         start=start, end=end + dt.timedelta(hours=max_lt), freq="1H"
     )
+    first_date = valid_times[0].strftime("%b %d, %Y, %H UTC")
+    last_date = valid_times[-1].strftime("%b %d, %Y, %H UTC")
+    logging.info("Calculating FLS fractions ")
+    logging.info(f"   for {first_date} to {last_date}.")
 
     # retrieve OBS dataframe
     obs_path = Path(out_dir_fls, "obs.p")
     if obs_path.is_file() and extend_previous:
         obs = pickle.load(open(obs_path, "rb"))
-        logging.info("Loaded obs from pickled object.")
+        logging.warning(f"Loaded obs from pickled object:")
+        logging.warning(f"  {obs_path}")
     else:
         # create dataframe
         obs = pd.DataFrame(columns=["fls_frac", "high_clouds"], index=valid_times)
+        logging.warning("Created new obs dataframe:")
+        logging.warning(f"  {obs_path}")
 
     # retrieve FCST dataframe
-    fcst_path = Path(out_dir_fls, "fcst.p")
+    fcst_path = Path(out_dir_fls, f"fcst_{exp}.p")
     if fcst_path.is_file() and extend_previous:
         fcst = pickle.load(open(fcst_path, "rb"))
-        logging.info("Loaded fcst from pickled object.")
+        logging.warning("Loaded fcst from pickled object:")
+        logging.warning(f"  {fcst_path}")
     else:
         # create dataframe
         fcst = pd.DataFrame(columns=np.arange(max_lt + 1), index=valid_times)
+        logging.warning("Created new fcst dataframe:")
+        logging.warning(f"  {fcst_path}")
 
     # initiate variables
     ml_mask = None
@@ -307,7 +318,7 @@ def calc_fls_fractions(
 
         # obs filename
         obs_file = Path(in_dir_obs, f"MSG_lscl-cosmo1eqc3km_{obs_timestamp}_c1e.nc")
-        logging.debug(f"SAT file: {obs_file}")
+        logging.warning(f"SAT file: {obs_file}")
 
         # load obs file
         try:
@@ -342,14 +353,14 @@ def calc_fls_fractions(
         for lt in range(max_lt + 1):
             ini_time = valid_time - dt.timedelta(hours=lt)
             ini_time_str = ini_time.strftime("%y%m%d%H")
-            fcst_file = Path(in_dir_model, f"tqc_{ini_time_str}_{lt:03}.grb2")
+            fcst_file = Path(in_dir_model, exp, f"tqc_{ini_time_str}_{lt:03}.grb2")
 
             if fcst_file.is_file():
-                logging.debug(f"Loading {fcst_file}")
+                logging.warning(f"Loading {fcst_file}")
                 ds2 = xr.open_dataset(fcst_file, engine="cfgrib").squeeze()
 
             else:
-                logging.debug(f"  but no {fcst_file}")
+                # logging.debug(f"  but no {fcst_file}")
                 continue
 
             tqc = ds2.unknown.values
@@ -376,17 +387,17 @@ def calc_fls_fractions(
     # plt.savefig("/scratch/swester/tmp/ml_mask.png")
 
 
-def load_obs_fcst(fls_path):
+def load_obs_fcst(wd, exp):  # TODO: WIP
     """Load obs and fcst from existing pickled dataframes.
 
     Args:
-        obs_path (str): obs
-        fcst_path (str): fcst
+        wd (PATH): obs
+        exp (str): experiment identifier
 
     Returns:
         2 dataframes: obs, fcst
 
     """
-    obs = pickle.load(open(Path(fls_path, "obs.p"), "rb"))
-    fcst = pickle.load(open(Path(fls_path, "fcst.p"), "rb"))
+    obs = pickle.load(open(Path(wd, "", "obs.p"), "rb"))
+    fcst = pickle.load(open(Path(fls_path, f"fcst_{exp}.p"), "rb"))
     return obs, fcst
