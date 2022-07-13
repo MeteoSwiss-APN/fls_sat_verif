@@ -419,7 +419,7 @@ def calc_fls_fractions(
     # plt.savefig("/scratch/swester/tmp/ml_mask.png")
 
 
-def load_obs_fcst(wd, exp):  # TODO: WIP
+def load_obs_fcst(wd, exp):
     """Load obs and fcst from existing pickled dataframes.
 
     Args:
@@ -430,6 +430,6 @@ def load_obs_fcst(wd, exp):  # TODO: WIP
         2 dataframes: obs, fcst
 
     """
-    obs = pickle.load(open(Path(wd, "", "obs.p"), "rb"))
-    fcst = pickle.load(open(Path(fls_path, f"fcst_{exp}.p"), "rb"))
+    obs = pickle.load(open(Path(wd, "fls", "obs.p"), "rb"))
+    fcst = pickle.load(open(Path(wd, "fls", f"fcst_{exp}.p"), "rb"))
     return obs, fcst

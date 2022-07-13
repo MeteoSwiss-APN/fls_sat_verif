@@ -23,9 +23,9 @@ To get detailed log-messages printed to screen use ``-v``, ``-vv`` or even ``-vv
 1. Prepare SAT input data: Retrieve with rubyscript
 
     1. Create directory ``<wd>/sat``
-    
+
     2.  Run: ``rbrun ~osm/bin/extract_satdata.rb -P LSCL -m c1e -p <start>..<end>,1h -o <wd>/sat/ -v``
-    
+
         - start: e.g. 202108302345
         - end: e.g. 202112312345
         - intervall: 1h, 3h
@@ -39,18 +39,17 @@ To get detailed log-messages printed to screen use ``-v``, ``-vv`` or even ``-vv
 
 ``conda activate fls_sat_verif``
 
-``fls_sat_verif --wd <wd> --retrieve_cosmo --start <YYMMDDHH> --end <YYMMDDHH> --interval <HH> --exp_model_dir <exp_dir> --exp <experiment_identifier>``
+``fls_sat_verif --retrieve_cosmo --wd <wd> --start <YYMMDDHH> --end <YYMMDDHH> --interval <HH> --exp_model_dir <exp_dir> --exp <experiment_identifier>``
 
     ADVICE! If you evaluate a long period, cut it into chunks of 3-5 days and send parallel jobs on postproc nodes with ``sbatch`` or ``batchPP``.
 
-
 3. Calculate FLS fractions
 
-``fls_sat_verif --calc_fractions --start YYMMDDHH --end YYMMDDHH --interval HH --max_lt HH --exp <experiment_name> --wd <wd> --extend_previous``
+``fls_sat_verif --calc_fractions --wd <wd> --start <YYMMDDHH> --end <YYMMDDHH> --interval <HH> --max_lt <HH> --exp <experiment_name> --extend_previous``
 
 4. Plotting
 
-``fls_sat_verif --plot_median_day_cycle --wd <wd> --exp <experiment_name> --start YYMMDDHH --end YYMMDDHH --init H(H)``
+``fls_sat_verif --plot_median_day_cycle --wd <wd> --start <YYMMDDHH> --end <YYMMDDHH> --init <H,H> --exp <experiment_name>``
 
 
 Credits
