@@ -85,7 +85,9 @@ def extract_tqc(grib_file, out_dir, date_str, lt):
     return
 
 
-def retrieve_cosmo_files(start, end, interval, max_lt, tqc_dir, exp_model_dir, exp):
+def retrieve_cosmo_files(
+    start, end, interval, max_lt, tqc_dir, exp_model_dir, exp, model
+):
     """Retrieve COSMO files.
 
     Args:
@@ -96,9 +98,10 @@ def retrieve_cosmo_files(start, end, interval, max_lt, tqc_dir, exp_model_dir, e
         tqc_dir (str):      tqc-folder in working directory
         exp_model_dir (str): path to model (cosmo) output
         exp (str):          experiment identifier
+        model (str):         model name
 
     """
-    logging.info(f"Retrieving COSMO-files from {exp_model_dir}")
+    logging.info(f"Retrieving {model}-files from {exp_model_dir}")
     logging.info(f"   from +0h to +{max_lt}h leadtime")
 
     # list of ini-dates of simulations
@@ -124,9 +127,10 @@ def retrieve_cosmo_files(start, end, interval, max_lt, tqc_dir, exp_model_dir, e
         for lt in range(0, max_lt + 1, 1):
             model_file = list(
                 Path(exp_model_dir, f"FCST{date.strftime('%y')}").glob(
-                    f"{date_str}_???/grib/c1effsurf{lt:03}_000"
+                    f"{date_str}_???/grib/{model}ffsurf{lt:03}_000"
                 )
             )
+            print(exp_model_dir, f"{date_str}_???/grib/{model}ffsurf{lt:03}_000")
             if len(model_file) == 0:
                 logging.warning(f"No file found for {date_str}: +{lt}h.")
             elif len(model_file) > 1:
@@ -277,6 +281,7 @@ def calc_fls_fractions(
     max_lt,
     extend_previous,
     threshold,
+    model,
 ):
     """Calculate FLS fractions in Swiss Plateau for OBS and FCST.
 
@@ -291,6 +296,8 @@ def calc_fls_fractions(
         max_lt (int):           maximum leadtime
         extend_previous (bool): load previous obs and fcst dataframes
         threshold (float):      threshold for low stratus confidence level
+        model (str):            model name
+
 
     Returns:
         obs (dataframe)
@@ -349,7 +356,7 @@ def calc_fls_fractions(
         logging.debug(f"SAT timestamp: {obs_timestamp}")
 
         # obs filename
-        obs_file = Path(in_dir_obs, f"MSG_lscl-cosmo1eqc3km_{obs_timestamp}_c1e.nc")
+        obs_file = Path(in_dir_obs, f"MSG_lscl-cosmo1eqc3km_{obs_timestamp}_{model}.nc")
         logging.warning(f"SAT file: {obs_file}")
 
         # load obs file
@@ -388,14 +395,19 @@ def calc_fls_fractions(
             fcst_file = Path(in_dir_model, exp, f"tqc_{ini_time_str}_{lt:03}.grb2")
 
             if fcst_file.is_file():
-                logging.warning(f"Loading {fcst_file}")
+                logging.info(f"Loading {fcst_file}")
                 ds2 = xr.open_dataset(fcst_file, engine="cfgrib").squeeze()
 
             else:
                 # logging.debug(f"  but no {fcst_file}")
                 continue
 
-            tqc = ds2.unknown.values
+            try:
+                tqc = ds2.TQC.values
+            except AttributeError:
+                # in case fxfilter did not write out variable name
+                logger.warning("Assuming that unknown variable in file is TQC.")
+                tqc = ds2.unknown.values
 
             # overwrite grid points covered by high clouds with nan
             tqc[np.isnan(lscl)] = np.nan

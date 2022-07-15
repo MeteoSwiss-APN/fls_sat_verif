@@ -96,6 +96,11 @@ from .utils import retrieve_cosmo_files
     default=0.05,
     help="Threshold for excluding days due to high clouds.",
 )
+@click.option(
+    "--model",
+    type=str,
+    help="Model name. Currently supported: c1e; c2e",
+)
 def main(
     *,
     dry_run: bool,
@@ -115,7 +120,8 @@ def main(
     extend_previous: bool,
     load_fractions: bool,
     lscl_threshold: float,
-    high_cloud_threshold,
+    high_cloud_threshold: float,
+    model: str,
 ) -> None:
 
     logging.basicConfig(level=count_to_log_level(verbose))
@@ -176,6 +182,7 @@ def main(
             tqc_dir=tqc_dir,
             exp_model_dir=exp_model_dir,
             exp=exp,
+            model=model,
         )
 
     if calc_fractions:
@@ -190,6 +197,7 @@ def main(
             max_lt=max_lt,
             extend_previous=extend_previous,
             threshold=lscl_threshold,
+            model=model,
         )
 
     if plot_median_day_cycle:
