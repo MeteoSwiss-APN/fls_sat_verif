@@ -406,7 +406,7 @@ def calc_fls_fractions(
                 tqc = ds2.TQC.values
             except AttributeError:
                 # in case fxfilter did not write out variable name
-                logger.warning("Assuming that unknown variable in file is TQC.")
+                logging.warning("Assuming that unknown variable in file is TQC.")
                 tqc = ds2.unknown.values
 
             # overwrite grid points covered by high clouds with nan
