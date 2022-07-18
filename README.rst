@@ -15,6 +15,8 @@ If you are a developer, you might want to install the package as an editable: ``
 Usage
 -----
 
+You might want to copy and modify the test script (see next section) which runs the verification according to the steps described below.
+
 All work will happen in a dedicated working directory <wd>, e.g. ``$SCRATCH/wd_fls_sat_verif``.
 
 To get detailed log-messages printed to screen use ``-v``, ``-vv`` or even ``-vvv``.
