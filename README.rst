@@ -51,6 +51,11 @@ To get detailed log-messages printed to screen use ``-v``, ``-vv`` or even ``-vv
 
 ``fls_sat_verif --plot_median_day_cycle --wd <wd> --start <YYMMDDHH> --end <YYMMDDHH> --init <H,H> --exp <experiment_name>``
 
+Test
+-----
+At the moment there is one test script included which tests the processing chain for a cosmo-2e experiment. If no "succesfull" is printed at the end, the test has failed. First activate your conda environment and then run:
+
+``./tests/fls_sat_verif/test_fls_sat_verif.sh``
 
 Credits
 -------
