@@ -10,4 +10,5 @@ Development Lead
 Contributors
 ------------
 
-None yet. Why not be the first?
+* Claire Merker <claire.merker@meteoswiss.ch>
+* Bas Crezee <bas.crezee@meteoswiss.ch>
