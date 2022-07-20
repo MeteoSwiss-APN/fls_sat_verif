@@ -15,6 +15,8 @@ If you are a developer, you might want to install the package as an editable: ``
 Usage
 -----
 
+You might want to copy and modify the test script (see next section) which runs the verification according to the steps described below.
+
 All work will happen in a dedicated working directory <wd>, e.g. ``$SCRATCH/wd_fls_sat_verif``.
 
 To get detailed log-messages printed to screen use ``-v``, ``-vv`` or even ``-vvv``.
@@ -39,18 +41,23 @@ To get detailed log-messages printed to screen use ``-v``, ``-vv`` or even ``-vv
 
 ``conda activate fls_sat_verif``
 
-``fls_sat_verif --retrieve_cosmo --wd <wd> --start <YYMMDDHH> --end <YYMMDDHH> --interval <HH> --exp_model_dir <exp_dir> --exp <experiment_identifier>``
+``fls_sat_verif --retrieve_cosmo --wd <wd> --start <YYMMDDHH> --end <YYMMDDHH> --interval <HH> --exp_model_dir <exp_dir> --exp <experiment_identifier> --model c1e``
 
     ADVICE! If you evaluate a long period, cut it into chunks of 3-5 days and send parallel jobs on postproc nodes with ``sbatch`` or ``batchPP``.
 
 3. Calculate FLS fractions
 
-``fls_sat_verif --calc_fractions --wd <wd> --start <YYMMDDHH> --end <YYMMDDHH> --interval <HH> --max_lt <HH> --exp <experiment_name> --extend_previous``
+``fls_sat_verif --calc_fractions --wd <wd> --start <YYMMDDHH> --end <YYMMDDHH> --interval <HH> --max_lt <HH> --exp <experiment_name> --extend_previous --model c1e``
 
 4. Plotting
 
 ``fls_sat_verif --plot_median_day_cycle --wd <wd> --start <YYMMDDHH> --end <YYMMDDHH> --init <H,H> --exp <experiment_name>``
 
+Test
+-----
+At the moment there is one test script included which tests the processing chain for a cosmo-2e experiment. If no "succesfull" is printed at the end, the test has failed. First activate your conda environment and then run:
+
+``./tests/fls_sat_verif/test_fls_sat_verif.sh``
 
 Credits
 -------

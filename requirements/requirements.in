@@ -1,5 +1,6 @@
 click
 numpy
+netCDF4
 pandas
 xarray
 matplotlib
