@@ -51,7 +51,7 @@ To get detailed log-messages printed to screen use ``-v``, ``-vv`` or even ``-vv
 
 4. Plotting
 
-``fls_sat_verif --plot_median_day_cycle --wd <wd> --start <YYMMDDHH> --end <YYMMDDHH> --init <H,H> --exp <experiment_name>``
+``fls_sat_verif --plot_median_day_cycle --wd <wd> --start <YYMMDDHH> --end <YYMMDDHH> --init <H> --exp <experiment_name>``
 
 Test
 -----
