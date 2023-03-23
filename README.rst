@@ -2,7 +2,10 @@
 fls_sat_verif
 =============
 
-Satellite-based verification of fog and low stratus forecasts
+Satellite-based verification of fog and low stratus forecasts. For explanation of underlying ideas see the following two publications and a dedicated confluence page:
+    - https://10.1002/qj.3849 : Sections 3.1 and 5.1
+    - https://10.1029/2020MS002437 : Section 3.2
+    - https://service.meteoswiss.ch/confluence/x/OpJGBg
 
 ------------
 Installation
