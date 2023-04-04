@@ -1,6 +1,7 @@
 """Command line interface of fls_sat_verif."""
 # Standard library
 import logging
+import os
 import sys
 from email.policy import default
 
@@ -10,6 +11,7 @@ import pandas as pd
 
 # Local
 from . import __version__
+from .plot import plt_fraction_per_leadtime
 from .plot import plt_median_day_cycle
 from .plot import plt_timeseries
 from .utils import calc_fls_fractions
@@ -37,7 +39,7 @@ from .utils import retrieve_cosmo_files
     default=1,
     help="Increase verbosity (specify multiple times for more)",
 )
-@click.option("--wd", type=str, help="Working directory.")
+@click.option("--wd", type=str, help="Working directory.", default="scratch")
 @click.option("--exp", type=str, help="Name of experiment.")
 @click.option(
     "--retrieve_cosmo",
@@ -47,7 +49,12 @@ from .utils import retrieve_cosmo_files
 @click.option(
     "--calc_fractions", is_flag=True, help="Calculate FLS fractions from OBS and FCST."
 )
-@click.option("--plot_median_day_cycle", is_flag=True, help="Plot median.")
+@click.option(
+    "--plot_median_day_cycle", is_flag=True, help="Plot median fraction for 24h cycle."
+)
+@click.option(
+    "--plot_fraction_per_leadtime", is_flag=True, help="Plot fraction per leadtime."
+)
 @click.option("--plot_timeseries", is_flag=True, help="Plot timeseries.")
 @click.option(
     "--start",
@@ -111,6 +118,7 @@ def main(
     retrieve_cosmo: bool,
     calc_fractions: bool,
     plot_median_day_cycle: bool,
+    plot_fraction_per_leadtime: bool,
     plot_timeseries: bool,
     start: str,
     end: str,
@@ -136,13 +144,12 @@ def main(
     # - start (except when only loading fractions)
     # - end   (except when only loading fractions)
 
-    if not wd:
-        print(f"Please give a sensible input for the working directory: --wd.")
-        sys.exit(1)
-    else:
-        print(f"\n-------------------------------")
-        print(f"Working directory: {wd}")
-        print(f"-------------------------------\n")
+    if wd == "scratch":
+        username = os.getlogin()
+        wd = f"/scratch/{username}/wd_fls_sat_verif"
+    print(f"\n-------------------------------")
+    print(f"Working directory: {wd}")
+    print(f"-------------------------------\n")
 
     if not exp:
         print(f"Please give a sensible input for the experiment identifier: --exp.")
@@ -217,7 +224,27 @@ def main(
             plot_dir,
             exp,
             max_lt,
-            init_hours=init,
+            init,
+        )
+
+    if plot_fraction_per_leadtime:
+
+        if not init:
+            print("Specify --init : Day time hour(s) where forecasts are started.")
+            sys.exit(1)
+
+        # load dataframes
+        obs, fcst = load_obs_fcst(wd, exp)
+        crit = obs.high_clouds < high_cloud_threshold
+
+        # plotting
+        plt_fraction_per_leadtime(
+            obs[crit].loc[start:end],
+            fcst[crit].loc[start:end],
+            plot_dir,
+            exp,
+            max_lt,
+            init,
         )
 
     if plot_timeseries:  # work in progress

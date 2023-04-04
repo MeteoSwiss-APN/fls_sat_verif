@@ -97,6 +97,86 @@ def plt_median_day_cycle(obs, fcst, plot_dir, exp, max_lt, init_hours):
         print(f"  {out_name}")
 
 
+def plt_fraction_per_leadtime(obs, fcst, plot_dir, exp, max_lt, init_hours):
+    """Plot median FLS fraction.
+
+    Args:
+        obs (dataframe):    obs from satellite
+        fcst (dataframe):   tqc from model
+        plot_dir (str):     output_path
+        exp (str):          experiment identifier
+        max_lt (int):       maximum leadtime - does not work properly yet!
+        init_hours (list):  init hours of model simulations
+
+    """
+    # define colors
+    color_obs = "darkslateblue"
+    color_fcst = "thistle"
+
+    # valid hours: daytime cycle
+    lt_hours = np.arange(0, max_lt + 1, 1)
+
+    # loop over init_hours
+    # (one figure per init_hour)
+    for init_hour in init_hours:
+
+        _, ax = plt.subplots(figsize=(9, 4))
+
+        # calculate daily cycle median FLS fraction for specific *leadtime*
+        obs_median = pd.Series(index=lt_hours)
+        fcst_median = pd.Series(index=lt_hours)
+
+        for lt in lt_hours:
+            day_hour = (init_hour + lt) % 24
+
+            # obs
+            obs_day_hour = obs[obs.index.hour == day_hour]
+            obs_median[lt] = obs_day_hour.fls_frac.median()
+            logging.info(f"day time {day_hour} UTC: {len(obs_day_hour)} observations")
+
+            # fcst
+            fcst_day_hour = fcst[fcst.index.hour == day_hour]
+            fcst_median[lt] = fcst_day_hour[lt].median()
+            logging.info(f"                       : {len(fcst_day_hour)} forecasts")
+
+            ax.bar(
+                lt - 0.2,
+                obs_median[lt],
+                color=color_obs,
+                width=0.4,
+            )
+            ax.bar(
+                lt + 0.2,
+                fcst_median[lt],
+                color=color_fcst,
+                width=0.4,
+            )
+
+        # x-axis
+        ax.set_xlabel("Leadtime [h]")
+        # ax.set_xticks([0, 6, 12, 18])
+
+        # title
+        ax.set_title(f"Median FLS fraction on Swiss Plateau")
+
+        # legend
+        # add customised legend
+        legend_elements = [
+            Patch(color=color_obs, label=f"OBS"),
+            Patch(
+                color=color_fcst, label=f"FCST {exp.upper()}, Init: {init_hour:02} UTC"
+            ),
+        ]
+        ax.legend(handles=legend_elements)
+
+        # save figure
+        file_name = f"fraction_per_leadtime_{exp}_init_{init_hour}"
+        out_name = Path(plot_dir, f"{file_name}.png")
+        plt.savefig(out_name, dpi=250)
+        print(f"Saved as:")
+        print(f"  {out_name}")
+
+
 def plt_timeseries(obs, fcst, plot_dir):
     """Plot median FLS fraction. - not finished yet.
 
