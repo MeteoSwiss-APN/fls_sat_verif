@@ -2,6 +2,12 @@
 fls_sat_verif
 =============
 
+
+=============================================================================================================================================================================================================
+**NB: This repository is not maintained anymore, for FLS verification, use https://github.com/meteoSwiss-APN/spativeri**
+=============================================================================================================================================================================================================
+
+
 Satellite-based verification of fog and low stratus forecasts. For explanation of underlying ideas see the following two publications and a dedicated confluence page:
     - https://doi.org/10.1002/qj.3849 : Sections 3.1 and 5.1
     - https://doi.org/10.1029/2020MS002437 : Section 3.2
